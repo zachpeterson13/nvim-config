@@ -1,6 +1,6 @@
 local opt = vim.opt
 
-opt.guicursor = ""
+opt.guicursor = "n-v-c-sm:block-Cursor-blinkwait300-blinkon200-blinkoff150,i-ci-ve:ver25-Cursor,r-cr-o:hor20-Cursor"
 
 opt.relativenumber = true
 opt.number = true
