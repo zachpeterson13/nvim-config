@@ -18,30 +18,26 @@ return {
 		local on_attach = function(client, bufnr)
 			opts.buffer = bufnr
 
+			local wk = require("which-key")
+
+			local prefix = "<leader>l"
+
+			wk.register({
+				[prefix] = { name = "[L]sp, Linter, and Formatter" },
+				[prefix .. "a"] = { vim.lsp.buf.code_action, "Code [A]ctions" },
+				[prefix .. "r"] = { ":LspRestart<CR>", "[R]estart Lsp" },
+				[prefix .. "n"] = { vim.lsp.buf.rename, "Smart Re[n]ame" },
+				-- Telescope related keybinds
+				[prefix .. "f"] = { name = "[F]ind in Telescope" },
+				[prefix .. "fr"] = { "<cmd>Telescope lsp_references<CR>", "Show Lsp [R]eferences" },
+				[prefix .. "fi"] = { "<cmd>Telescope lsp_implementations<CR>", "Show Lsp [I]mplementations" },
+				[prefix .. "ft"] = { "<cmd>Telescope lsp_type_definitions<CR>", "Show Lsp [T]ype definitions" },
+				[prefix .. "fd"] = { "<cmd>Telescope diagnostics bufnr=0<CR>", "Show buffer [D]iagnostics" },
+			})
+
 			-- set keybinds
-			opts.desc = "Show LSP references"
-			keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", opts) -- show definition, references
-
 			opts.desc = "Go to declaration"
-			keymap.set("n", "gD", vim.lsp.buf.declaration, opts) -- go to declaration
-
-			opts.desc = "Show LSP definitions"
-			keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts) -- show lsp definitions
-
-			opts.desc = "Show LSP implementations"
-			keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts) -- show lsp implementations
-
-			opts.desc = "Show LSP type definitions"
-			keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", opts) -- show lsp type definitions
-
-			opts.desc = "See available code actions"
-			keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts) -- see available code actions, in visual mode will apply to selection
-
-			opts.desc = "Smart rename"
-			keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts) -- smart rename
-
-			opts.desc = "Show buffer diagnostics"
-			keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts) -- show  diagnostics for file
+			keymap.set("n", "gd", vim.lsp.buf.declaration, opts) -- go to declaration
 
 			opts.desc = "Show line diagnostics"
 			keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts) -- show diagnostics for line
@@ -54,9 +50,6 @@ return {
 
 			opts.desc = "Show documentation for what is under cursor"
 			keymap.set("n", "K", vim.lsp.buf.hover, opts) -- show documentation for what is under cursor
-
-			opts.desc = "Restart LSP"
-			keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
 		end
 
 		-- used to enable autocompletion (assign to every lsp server config)
@@ -70,54 +63,10 @@ return {
 			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 		end
 
-		-- configure html server
-		lspconfig["html"].setup({
-			capabilities = capabilities,
-			on_attach = on_attach,
-		})
-
 		-- configure typescript server with plugin
 		lspconfig["tsserver"].setup({
 			capabilities = capabilities,
 			on_attach = on_attach,
-		})
-
-		-- configure css server
-		lspconfig["cssls"].setup({
-			capabilities = capabilities,
-			on_attach = on_attach,
-		})
-
-		-- configure tailwindcss server
-		lspconfig["tailwindcss"].setup({
-			capabilities = capabilities,
-			on_attach = on_attach,
-		})
-
-		-- configure svelte server
-		lspconfig["svelte"].setup({
-			capabilities = capabilities,
-			on_attach = on_attach,
-		})
-
-		-- configure prisma orm server
-		lspconfig["prismals"].setup({
-			capabilities = capabilities,
-			on_attach = on_attach,
-		})
-
-		-- configure graphql language server
-		lspconfig["graphql"].setup({
-			capabilities = capabilities,
-			on_attach = on_attach,
-			filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
-		})
-
-		-- configure emmet language server
-		lspconfig["emmet_ls"].setup({
-			capabilities = capabilities,
-			on_attach = on_attach,
-			filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
 		})
 
 		-- configure python server
@@ -129,11 +78,15 @@ return {
 		lspconfig["rust_analyzer"].setup({
 			capabilities = capabilities,
 			on_attach = on_attach,
-		})
-
-		lspconfig["awk_ls"].setup({
-			capabilities = capabilities,
-			on_attach = on_attach,
+			settings = {
+				["rust-analyzer"] = {
+					checkOnSave = true,
+					check = {
+						command = "clippy",
+						features = "all",
+					},
+				},
+			},
 		})
 
 		-- configure lua server (with special settings)

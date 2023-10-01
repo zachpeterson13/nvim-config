@@ -1,5 +1,7 @@
 return {
-    "nvim-lua/plenary.nvim",
+	"nvim-lua/plenary.nvim",
 
 	"christoomey/vim-tmux-navigator",
+
+	"nvim-treesitter/nvim-treesitter-context",
 }
